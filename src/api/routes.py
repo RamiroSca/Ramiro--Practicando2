@@ -39,7 +39,7 @@ def create_lista():
     new_lista = Lista(id=new_user_id, list_name=data["list_name"],password=data["password"])
     db.session.add(new_lista)
     db.session.commit()
-    # token = create_access_token(identity = new_user.id)
+    # token = create_access_token(identity = new_lista.id)
     response_body = {
         "msg": "All working",
         # "token": token,
@@ -152,3 +152,17 @@ def get_all_gatos_one_list(lista_name):
 
 
     return jsonify(response_body), 200
+
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    user = Lista.query.filter_by(list_name=current_user).first()
+    print("current user is this:", current_user)
+    if user is None:
+        raise APIException("User not found", status_code=404)
+    return jsonify({
+        "msg": "User authenticated",
+        "user": user.serialize()
+    }), 200

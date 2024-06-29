@@ -1,13 +1,29 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import form from "../../img/Gast2.png"
 import rigoImageUrl from "../../img/rigo-baby.jpg";
+import { useNavigate } from 'react-router-dom';
 
 export const Gast = () => {
 	const { store, actions } = useContext(Context);
+	const params = useParams()
+	const navigate = useNavigate();
 
+	useEffect(()=>{
+		actions.verificacionToken(params.lista)
+	},[])
+	console.log(store.token);
+
+	useEffect(()=>{
+		if(store.token=="error"){
+			navigate('/')
+		}
+		store.token=null
+	},[store.token])
+	
+	// console.log(params.lista);
 	return (
 		<div className="bg-black m-0">
 			<div className="container ">
